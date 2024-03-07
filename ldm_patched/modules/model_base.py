@@ -17,22 +17,32 @@ class ModelType(Enum):
 
 from ldm_patched.modules.model_sampling import EPS, V_PREDICTION, ModelSamplingDiscrete, ModelSamplingContinuousEDM
 
+class ModelSamplingOneDiff1(ModelSamplingDiscrete, EPS):
+    pass
+
+class ModelSamplingOneDiff2(ModelSamplingDiscrete, V_PREDICTION):
+    pass
+
+class ModelSamplingOneDiff3(ModelSamplingContinuousEDM, V_PREDICTION):
+    pass
 
 def model_sampling(model_config, model_type):
     s = ModelSamplingDiscrete
 
     if model_type == ModelType.EPS:
-        c = EPS
+        print(f"### condition 1")
+        return ModelSamplingOneDiff1(model_config)
+        #c = EPS
     elif model_type == ModelType.V_PREDICTION:
-        c = V_PREDICTION
+        print(f"### condition 2")
+        return ModelSamplingOneDiff2(model_config)
+        # c = V_PREDICTION
     elif model_type == ModelType.V_PREDICTION_EDM:
-        c = V_PREDICTION
-        s = ModelSamplingContinuousEDM
-
-    class ModelSampling(s, c):
-        pass
-
-    return ModelSampling(model_config)
+        print(f"### condition 3")
+        return ModelSamplingOneDiff3(model_config)
+        # c = V_PREDICTION
+        # s = ModelSamplingContinuousEDM
+    raise "Not implemented"
 
 
 class BaseModel(torch.nn.Module):
@@ -82,6 +92,8 @@ class BaseModel(torch.nn.Module):
                 extra = extra.to(dtype)
             extra_conds[o] = extra
 
+        #from onediff.infer_compiler import oneflow_compile
+        #self.diffusion_model = oneflow_compile(self.diffusion_model, use_graph=False)
         model_output = self.diffusion_model(xc, t, context=context, control=control, transformer_options=transformer_options, **extra_conds).float()
         return self.model_sampling.calculate_denoised(sigma, model_output, x)
 

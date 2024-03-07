@@ -836,16 +836,16 @@ class UNetModel(nn.Module):
         num_video_frames = kwargs.get("num_video_frames", self.default_num_video_frames)
         image_only_indicator = kwargs.get("image_only_indicator", self.default_image_only_indicator)
         time_context = kwargs.get("time_context", None)
-
         assert (y is not None) == (
             self.num_classes is not None
         ), "must specify y if and only if the model is class-conditional"
         hs = []
         t_emb = timestep_embedding(timesteps, self.model_channels, repeat_only=False).to(x.dtype)
         emb = self.time_embed(t_emb)
-
+        import pdb;pdb.set_trace()
         if self.num_classes is not None:
             assert y.shape[0] == x.shape[0]
+            print(f"y: {y.shape} x: {x.shape}")
             emb = emb + self.label_emb(y)
 
         h = x
