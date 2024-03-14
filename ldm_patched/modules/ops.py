@@ -22,13 +22,6 @@ class disable_weight_init:
             return torch.nn.functional.linear(input, weight, bias)
 
         def forward(self, *args, **kwargs):
-            # print(f"x:{args[0].shape}, weight:{self.weight.shape}")
-            # if args[0].shape[1] == 5632:
-            #     import pdb;pdb.set_trace()
-            # if self.bias is not None:
-            #     print(f"bias: {self.bias.shape}")
-            # else:
-            #     print(f"bias: None")
             if self.ldm_patched_cast_weights:
                 return self.forward_ldm_patched_cast_weights(*args, **kwargs)
             else:
