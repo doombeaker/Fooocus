@@ -30,18 +30,11 @@ def model_sampling(model_config, model_type):
     s = ModelSamplingDiscrete
 
     if model_type == ModelType.EPS:
-        print(f"### condition 1")
         return ModelSamplingOneDiff1(model_config)
-        #c = EPS
     elif model_type == ModelType.V_PREDICTION:
-        print(f"### condition 2")
         return ModelSamplingOneDiff2(model_config)
-        # c = V_PREDICTION
     elif model_type == ModelType.V_PREDICTION_EDM:
-        print(f"### condition 3")
         return ModelSamplingOneDiff3(model_config)
-        # c = V_PREDICTION
-        # s = ModelSamplingContinuousEDM
     raise "Not implemented"
 
 
@@ -92,8 +85,6 @@ class BaseModel(torch.nn.Module):
                 extra = extra.to(dtype)
             extra_conds[o] = extra
 
-        #from onediff.infer_compiler import oneflow_compile
-        #self.diffusion_model = oneflow_compile(self.diffusion_model, use_graph=False)
         model_output = self.diffusion_model(xc, t, context=context, control=control, transformer_options=transformer_options, **extra_conds).float()
         return self.model_sampling.calculate_denoised(sigma, model_output, x)
 

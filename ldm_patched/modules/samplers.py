@@ -220,6 +220,8 @@ def calc_cond_uncond_batch(model, cond, uncond, x_in, timestep, model_options):
 
         c['transformer_options'] = transformer_options
 
+        from onediff.infer_compiler import oneflow_compile
+        model.diffusion_model = oneflow_compile(model.diffusion_model, use_graph=True)
         if 'model_function_wrapper' in model_options:
             output = model_options['model_function_wrapper'](model.apply_model, {"input": input_x, "timestep": timestep_, "c": c, "cond_or_uncond": cond_or_uncond}).chunk(batch_chunks)
         else:
