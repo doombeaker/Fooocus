@@ -322,25 +322,8 @@ def attention_pytorch(q, k, v, heads, mask=None):
     return out
 
 
-optimized_attention = attention_basic
-optimized_attention_masked = attention_basic
-
-if model_management.xformers_enabled():
-    print("Using xformers cross attention")
-    optimized_attention = attention_xformers
-elif model_management.pytorch_attention_enabled():
-    print("Using pytorch cross attention")
-    optimized_attention = attention_pytorch
-else:
-    if args.attention_split:
-        print("Using split optimization for cross attention")
-        optimized_attention = attention_split
-    else:
-        print("Using sub quadratic optimization for cross attention, if you have memory or speed issues try using: --attention-split")
-        optimized_attention = attention_sub_quad
-
-if model_management.pytorch_attention_enabled():
-    optimized_attention_masked = attention_pytorch
+optimized_attention = attention_pytorch
+optimized_attention_masked = attention_pytorch
 
 def optimized_attention_for_device(device, mask=False):
     if device == torch.device("cpu"): #TODO
