@@ -106,4 +106,6 @@ if args.gpu_device_id is not None:
 
 download_models()
 
+from register_onediff_fooocus import *
+print("register onediff fooocus...")
 from webui import *

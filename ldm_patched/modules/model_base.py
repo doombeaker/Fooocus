@@ -17,22 +17,25 @@ class ModelType(Enum):
 
 from ldm_patched.modules.model_sampling import EPS, V_PREDICTION, ModelSamplingDiscrete, ModelSamplingContinuousEDM
 
+class ModelSamplingOneDiff1(ModelSamplingDiscrete, EPS):
+    pass
+
+class ModelSamplingOneDiff2(ModelSamplingDiscrete, V_PREDICTION):
+    pass
+
+class ModelSamplingOneDiff3(ModelSamplingContinuousEDM, V_PREDICTION):
+    pass
 
 def model_sampling(model_config, model_type):
     s = ModelSamplingDiscrete
 
     if model_type == ModelType.EPS:
-        c = EPS
+        return ModelSamplingOneDiff1(model_config)
     elif model_type == ModelType.V_PREDICTION:
-        c = V_PREDICTION
+        return ModelSamplingOneDiff2(model_config)
     elif model_type == ModelType.V_PREDICTION_EDM:
-        c = V_PREDICTION
-        s = ModelSamplingContinuousEDM
-
-    class ModelSampling(s, c):
-        pass
-
-    return ModelSampling(model_config)
+        return ModelSamplingOneDiff3(model_config)
+    raise "Not implemented"
 
 
 class BaseModel(torch.nn.Module):
